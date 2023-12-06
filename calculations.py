@@ -28,7 +28,7 @@ def user_dataframe(dataframe, username):
 
 
 def plot(dataframe):
-    fig = px.line(dataframe, x="read_time", y="current_usage_GB", color="name")
+    fig = px.line(dataframe, x="read_time", y="current_usage_GB", color="name", markers=True,line_shape='spline')
     fig.show()
 
 
