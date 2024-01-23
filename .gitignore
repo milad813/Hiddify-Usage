@@ -153,3 +153,4 @@ cython_debug/
 
 *.db
 secret.py
+usage.db.zip
