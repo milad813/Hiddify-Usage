@@ -3,22 +3,19 @@ import sqlite3
 import paramiko
 import plotly.express as px
 import secret
-import zipfile
-
+import subprocess
 
 def import_database():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(secret.server_ip, username=secret.username, password=secret.password)
-    ssh.exec_command("/usr/bin/zip /home/usage.db.zip /home/usage.db")
     sftp = ssh.open_sftp()
     sftp.get(secret.remote_path, secret.local_path_zip)
     sftp.close()
     ssh.close()
 
 def unpack_zip_file():
-    with zipfile.ZipFile('usage.db.zip','r') as zip_ref:
-        zip_ref.extractall()
+    subprocess.run(['powershell', '-Command', 'Expand-Archive', '-Force', '-Path', 'usage.db.zip', '-DestinationPath', '.'])
 
 def create_dataframe():
     conn = sqlite3.connect(secret.local_path_db)
@@ -33,7 +30,7 @@ def user_dataframe(dataframe, username):
 
 
 def plot(dataframe):
-    fig = px.line(dataframe, x="read_time", y="current_usage_GB", color="name", markers=True)
+    fig = px.line(dataframe, x="read_time", y="current_usage", color="name", markers=True)
     fig.show()
 
 
